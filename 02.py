@@ -9,23 +9,19 @@ result = {}
 
 with open('boxoffice.csv', newline='', encoding='utf-8') as f:
     reader = csv.DictReader(f)
-#한줄씩 읽는다.
     code_list = []  
     for row in reader:
-        # print(row)
         code_list.append(row['movieCd'])
-for i in range(186):
+for i in range(len(code_list)):  
     url = 'http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json?'
     url += f'key={key}&movieCd={int(code_list[i]) }'    ###int(code_list[i])       20192591
     res = requests.get(url)
     dict_json = res.json()
-
     movie_info = dict_json.get('movieInfoResult').get('movieInfo')
-
+    
     for movie in movie_info:
         code = movie_info.get('movieCd')
         ####
-        
         if movie_info.get('audits'):
             m = movie_info.get('audits')[0].get('watchGradeNm')
         else:
@@ -40,13 +36,12 @@ for i in range(186):
             'movieNm' : movie_info.get('movieNm'),
             'movieNmEn' : movie_info.get('movieNmEn'),
             'movieNmOg' : movie_info.get('movieNmOg'),
-            'watchGradeNm' : f'{m}' ,           ##빈값나올때?
+            'watchGradeNm' : f'{m}' ,          
             'openDt' : movie_info.get('openDt')[:4],
             'showTm' : movie_info.get('showTm'),
             'genreNm' : movie_info.get('genres')[0].get('genreNm'),
-            'peopleNm' : f'{n}'  ##빈값나올때?
+            'peopleNm' : f'{n}'  
         }
-
 
 with open('movie.csv', 'w', newline = '',encoding='utf-8') as f:
     #저장할 데이터들의 필드 이름을 미리 정한다. 
